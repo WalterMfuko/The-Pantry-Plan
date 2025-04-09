@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pantry Plan Grocery & Meal Planner</title>
+    <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1, h2 {
+            color: #3b7d4a;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #3b7d4a;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2a5a34;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .purchase-btn {
+            background-color: #3498db;
+            margin-right: 5px;
+        }
+
+        .purchase-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        nav {
+            margin-top: 10px;
+        }
+        
+        /* Main content area */
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        /* Form styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        
+        /* List styles */
+        .grocery-list {
+            margin-top: 20px;
+        }
+        
+        .category-section {
+            margin-bottom: 25px;
+        }
+        
+        .grocery-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .grocery-item > div {
+            display: flex;
+        }
+        
+        /* Meal planner styles */
+        .meal-day {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .meal-day h3 {
+            color: #3b7d4a;
+            margin-bottom: 10px;
+        }
+        
+        .meal-type h4 {
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav {
+                margin-top: 15px;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The Pantry Plan</h1>
+        <nav>
+            <button id="grocery-nav">Grocery List</button>
+            <button id="meal-nav">Meal Planner</button>
+        </nav>
+    </header>
+    
+    <!-- Grocery List Page -->
+    <div id="grocery-page" class="container">
+        <h2>Grocery List</h2>
+        
+        <div class="form-group">
+            <label for="item-name">Add New Item:</label>
+            <input type="text" id="item-name" placeholder="Enter item name">
+        </div>
+        
+        <div class="form-group">
+            <label for="item-category">Category:</label>
+            <select id="item-category">
+                <option value="produce">Produce</option>
+                <option value="dairy">Dairy & Alternatives</option>
+                <option value="dry-goods">Dry Goods</option>
+                <option value="frozen">Frozen Foods</option>
+                <option value="beverages">Beverages</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        
+        <button id="add-item">Add Item</button>
+        
+        <div class="grocery-list">
+            <div id="produce" class="category-section">
+                <h3>Produce</h3>
+                <div id="produce-items"></div>
+            </div>
+            
+            <div id="dairy" class="category-section">
+                <h3>Dairy & Alternatives</h3>
+                <div id="dairy-items"></div>
+            </div>
+            
+            <div id="dry-goods" class="category-section">
+                <h3>Dry Goods</h3>
+                <div id="dry-goods-items"></div>
+            </div>
+            
+            <div id="frozen" class="category-section">
+                <h3>Frozen Foods</h3>
+                <div id="frozen-items"></div>
+            </div>
+            
+            <div id="beverages" class="category-section">
+                <h3>Beverages</h3>
+                <div id="beverages-items"></div>
+            </div>
+            
+            <div id="other" class="category-section">
+                <h3>Other</h3>
+                <div id="other-items"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Meal Templates Section -->
+    <div class="container">
+        <h2>Meal Templates</h2>
+        <div class="form-group">
+            <label for="template-name">Template Name:</label>
+            <input type="text" id="template-name" placeholder="E.g., Favorite Breakfast">
+        </div>
+        <div class="form-group">
+            <label for="template-meal">Meal Description:</label>
+            <input type="text" id="template-meal" placeholder="Enter meal details">
+        </div>
+        <div class="form-group">
+            <label for="template-type">Meal Type:</label>
+            <select id="template-type">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+            </select>
+        </div>
+        <button id="save-template">Save Template</button>
+        
+        <div id="templates-list" class="grocery-list">
+            <h3>Saved Templates</h3>
+        </div>
+    </div>
+    
+    <!-- Meal Planner Page -->
+    <div id="meal-page" class="container" style="display: none;">
+        <h2>Weekly Meal Planner</h2>
+        
+        <div class="meal-day">
+            <h3>Monday</h3>
+            <div class="meal-type">
+                <h4>Breakfast</h4>
+                <div class="form-group">
+                    <input type="text" id="monday-breakfast" placeholder="Enter Monday's breakfast">
+                    <button class="save-meal" data-day="monday" data-type="breakfast">Save</button>
+                </div>
+                <div id="monday-breakfast-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Lunch</h4>
+                <div class="form-group">
+                    <input type="text" id="monday-lunch" placeholder="Enter Monday's lunch">
+                    <button class="save-meal" data-day="monday" data-type="lunch">Save</button>
+                </div>
+                <div id="monday-lunch-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Dinner</h4>
+                <div class="form-group">
+                    <input type="text" id="monday-dinner" placeholder="Enter Monday's dinner">
+                    <button class="save-meal" data-day="monday" data-type="dinner">Save</button>
+                </div>
+                <div id="monday-dinner-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Snack</h4>
+                <div class="form-group">
+                    <input type="text" id="monday-snack" placeholder="Enter Monday's snack">
+                    <button class="save-meal" data-day="monday" data-type="snack">Save</button>
+                </div>
+                <div id="monday-snack-saved"></div>
+            </div>
+        </div>
+        
+        <div class="meal-day">
+            <h3>Tuesday</h3>
+            <div class="meal-type">
+                <h4>Breakfast</h4>
+                <div class="form-group">
+                    <input type="text" id="tuesday-breakfast" placeholder="Enter Tuesday's breakfast">
+                    <button class="save-meal" data-day="tuesday" data-type="breakfast">Save</button>
+                </div>
+                <div id="tuesday-breakfast-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Lunch</h4>
+                <div class="form-group">
+                    <input type="text" id="tuesday-lunch" placeholder="Enter Tuesday's lunch">
+                    <button class="save-meal" data-day="tuesday" data-type="lunch">Save</button>
+                </div>
+                <div id="tuesday-lunch-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Dinner</h4>
+                <div class="form-group">
+                    <input type="text" id="tuesday-dinner" placeholder="Enter Tuesday's dinner">
+                    <button class="save-meal" data-day="tuesday" data-type="dinner">Save</button>
+                </div>
+                <div id="tuesday-dinner-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Snack</h4>
+                <div class="form-group">
+                    <input type="text" id="tuesday-snack" placeholder="Enter Tuesday's snack">
+                    <button class="save-meal" data-day="tuesday" data-type="snack">Save</button>
+                </div>
+                <div id="tuesday-snack-saved"></div>
+            </div>
+        </div>
+        
+        <div class="meal-day">
+            <h3>Wednesday</h3>
+            <div class="meal-type">
+                <h4>Breakfast</h4>
+                <div class="form-group">
+                    <input type="text" id="wednesday-breakfast" placeholder="Enter Wednesday's breakfast">
+                    <button class="save-meal" data-day="wednesday" data-type="breakfast">Save</button>
+                </div>
+                <div id="wednesday-breakfast-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Lunch</h4>
+                <div class="form-group">
+                    <input type="text" id="wednesday-lunch" placeholder="Enter Wednesday's lunch">
+                    <button class="save-meal" data-day="wednesday" data-type="lunch">Save</button>
+                </div>
+                <div id="wednesday-lunch-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Dinner</h4>
+                <div class="form-group">
+                    <input type="text" id="wednesday-dinner" placeholder="Enter Wednesday's dinner">
+                    <button class="save-meal" data-day="wednesday" data-type="dinner">Save</button>
+                </div>
+                <div id="wednesday-dinner-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Snack</h4>
+                <div class="form-group">
+                    <input type="text" id="wednesday-snack" placeholder="Enter Wednesday's snack">
+                    <button class="save-meal" data-day="wednesday" data-type="snack">Save</button>
+                </div>
+                <div id="wednesday-snack-saved"></div>
+            </div>
+        </div>
+        
+        <div class="meal-day">
+            <h3>Thursday</h3>
+            <div class="meal-type">
+                <h4>Breakfast</h4>
+                <div class="form-group">
+                    <input type="text" id="thursday-breakfast" placeholder="Enter Thursday's breakfast">
+                    <button class="save-meal" data-day="thursday" data-type="breakfast">Save</button>
+                </div>
+                <div id="thursday-breakfast-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Lunch</h4>
+                <div class="form-group">
+                    <input type="text" id="thursday-lunch" placeholder="Enter Thursday's lunch">
+                    <button class="save-meal" data-day="thursday" data-type="lunch">Save</button>
+                </div>
+                <div id="thursday-lunch-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Dinner</h4>
+                <div class="form-group">
+                    <input type="text" id="thursday-dinner" placeholder="Enter Thursday's dinner">
+                    <button class="save-meal" data-day="thursday" data-type="dinner">Save</button>
+                </div>
+                <div id="thursday-dinner-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Snack</h4>
+                <div class="form-group">
+                    <input type="text" id="thursday-snack" placeholder="Enter Thursday's snack">
+                    <button class="save-meal" data-day="thursday" data-type="snack">Save</button>
+                </div>
+                <div id="thursday-snack-saved"></div>
+            </div>
+        </div>
+        
+        <div class="meal-day">
+            <h3>Friday</h3>
+            <div class="meal-type">
+                <h4>Breakfast</h4>
+                <div class="form-group">
+                    <input type="text" id="friday-breakfast" placeholder="Enter Friday's breakfast">
+                    <button class="save-meal" data-day="friday" data-type="breakfast">Save</button>
+                </div>
+                <div id="friday-breakfast-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Lunch</h4>
+                <div class="form-group">
+                    <input type="text" id="friday-lunch" placeholder="Enter Friday's lunch">
+                    <button class="save-meal" data-day="friday" data-type="lunch">Save</button>
+                </div>
+                <div id="friday-lunch-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Dinner</h4>
+                <div class="form-group">
+                    <input type="text" id="friday-dinner" placeholder="Enter Friday's dinner">
+                    <button class="save-meal" data-day="friday" data-type="dinner">Save</button>
+                </div>
+                <div id="friday-dinner-saved"></div>
+            </div>
+            <div class="meal-type">
+                <h4>Snack</h4>
+                <div class="form-group">
+                    <input type="text" id="friday-snack" placeholder="Enter Friday's snack">
+                    <button class="save-meal" data-day="friday" data-type="snack">Save</button>
+                </div>
+                <div id="friday-snack-saved"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const groceryPage = document.getElementById('grocery-page');
+        const mealPage = document.getElementById('meal-page');
+        const groceryNav = document.getElementById('grocery-nav');
+        const mealNav = document.getElementById('meal-nav');
+        const addItemBtn = document.getElementById('add-item');
+        const itemName = document.getElementById('item-name');
+        const itemCategory = document.getElementById('item-category');
+        const saveMealBtns = document.querySelectorAll('.save-meal');
+        
+        // Initialize grocery list from localStorage
+        let groceryList = JSON.parse(localStorage.getItem('groceryList')) || [];
+        let mealPlan = JSON.parse(localStorage.getItem('mealPlan')) || {
+            monday: { breakfast: '', lunch: '', dinner: '', snack: '' },
+            tuesday: { breakfast: '', lunch: '', dinner: '', snack: '' },
+            wednesday: { breakfast: '', lunch: '', dinner: '', snack: '' },
+            thursday: { breakfast: '', lunch: '', dinner: '', snack: '' },
+            friday: { breakfast: '', lunch: '', dinner: '', snack: '' }
+        };
+        let mealTemplates = JSON.parse(localStorage.getItem('mealTemplates')) || [];
+        
+        // Navigation between pages
+        groceryNav.addEventListener('click', () => {
+            groceryPage.style.display = 'block';
+            mealPage.style.display = 'none';
+        });
+        
+        mealNav.addEventListener('click', () => {
+            groceryPage.style.display = 'none';
+            mealPage.style.display = 'block';
+        });
+        
+        // Add grocery item
+        addItemBtn.addEventListener('click', () => {
+            const name = itemName.value.trim();
+            const category = itemCategory.value;
+            
+            if (name) {
+                const item = {
+                    id: Date.now(),
+                    name: name,
+                    category: category,
+                    purchased: false // Add this property
+                };
+                
+                groceryList.push(item);
+                saveGroceryList();
+                renderGroceryList();
+                itemName.value = '';
+            }
+        });
+        
+        // Save grocery list to localStorage
+        function saveGroceryList() {
+            localStorage.setItem('groceryList', JSON.stringify(groceryList));
+        }
+        
+        // Render grocery list
+        function renderGroceryList() {
+            // Clear existing items
+            document.querySelectorAll('[id$="-items"]').forEach(el => {
+                if (el.id !== 'item-name') {
+                    el.innerHTML = '';
+                }
+            });
+            
+            // Sort items by category
+            groceryList.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'grocery-item';
+                
+                // Style text if item is purchased
+                const itemText = item.purchased ? 
+                    `<span style="text-decoration: line-through; color: #888;">${item.name}</span>` : 
+                    `<span>${item.name}</span>`;
+                
+                // Add purchase button with different text based on status
+                const purchaseBtnText = item.purchased ? 'Unpurchase' : 'Purchased';
+                
+                itemEl.innerHTML = `
+                    ${itemText}
+                    <div>
+                        <button class="purchase-btn" data-id="${item.id}">${purchaseBtnText}</button>
+                        <button class="delete-btn" data-id="${item.id}">Delete</button>
+                    </div>
+                `;
+                
+                const categoryContainer = document.getElementById(`${item.category}-items`);
+                if (categoryContainer) {
+                    categoryContainer.appendChild(itemEl);
+                }
+            });
+            
+            // Add delete event listeners
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    groceryList = groceryList.filter(item => item.id !== itemId);
+                    saveGroceryList();
+                    renderGroceryList();
+                });
+            });
+            
+            // Add purchase event listeners
+            document.querySelectorAll('.purchase-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    groceryList = groceryList.map(item => {
+                        if (item.id === itemId) {
+                            return { ...item, purchased: !item.purchased };
+                        }
+                        return item;
+                    });
+                    saveGroceryList();
+                    renderGroceryList();
+                });
+            });
+        }
+        
+        // Meal planner functionality
+        saveMealBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const day = e.target.getAttribute('data-day');
+                const type = e.target.getAttribute('data-type');
+                const mealInput = document.getElementById(`${day}-${type}`);
+                const meal = mealInput.value.trim();
+                
+                if (meal) {
+                    mealPlan[day][type] = meal;
+                    saveMealPlan();
+                    renderMealPlan();
+                    mealInput.value = '';
+                }
+            });
+        });
+        
+        // Save meal plan to localStorage
+        function saveMealPlan() {
+            localStorage.setItem('mealPlan', JSON.stringify(mealPlan));
+        }
+        
+        // Render meal plan
+        function renderMealPlan() {
+            for (const day in mealPlan) {
+                for (const type in mealPlan[day]) {
+                    const mealContainer = document.getElementById(`${day}-${type}-saved`);
+                    if (mealContainer && mealPlan[day][type]) {
+                        mealContainer.innerHTML = `
+                            <div class="grocery-item">
+                                <span>${mealPlan[day][type]}</span>
+                                <button class="delete-btn" data-day="${day}" data-type="${type}">Delete</button>
+                            </div>
+                        `;
+                    } else if (mealContainer) {
+                        mealContainer.innerHTML = '';
+                    }
+                }
+            }
+            
+            // Add delete event listeners for meals
+            document.querySelectorAll('#meal-page .delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const day = e.target.getAttribute('data-day');
+                    const type = e.target.getAttribute('data-type');
+                    mealPlan[day][type] = '';
+                    saveMealPlan();
+                    renderMealPlan();
+                });
+            });
+        }
+        
+        // Meal Templates functionality
+        function saveMealTemplates() {
+            localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+        }
+
+        function renderMealTemplates() {
+            const templatesList = document.getElementById('templates-list');
+            templatesList.innerHTML = '<h3>Saved Templates</h3>';
+            
+            mealTemplates.forEach(template => {
+                const templateEl = document.createElement('div');
+                templateEl.className = 'grocery-item';
+                templateEl.innerHTML = `
+                    <div>
+                        <strong>${template.name}</strong> (${template.type}): 
+                        ${template.meal}
+                    </div>
+                    <div>
+                        <button class="use-template" data-id="${template.id}">Use</button>
+                        <button class="delete-template" data-id="${template.id}">Delete</button>
+                    </div>
+                `;
+                
+                templatesList.appendChild(templateEl);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.use-template').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const templateId = parseInt(e.target.getAttribute('data-id'));
+                    const template = mealTemplates.find(t => t.id === templateId);
+                    
+                    if (template) {
+                        const typeInputs = document.querySelectorAll(`[id$="-${template.type}"]`);
+                        if (typeInputs.length > 0) {
+                            typeInputs[0].value = template.meal;
+                            typeInputs[0].focus();
+                        }
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-template').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const templateId = parseInt(e.target.getAttribute('data-id'));
+                    mealTemplates = mealTemplates.filter(t => t.id !== templateId);
+                    saveMealTemplates();
+                    renderMealTemplates();
+                });
+            });
+        }
+
+        function addMealTemplateSection() {
+            const templateSection = document.createElement('div');
+            templateSection.className = 'container';
+            templateSection.innerHTML = `
+                <h2>Meal Templates</h2>
+                <div class="form-group">
+                    <label for="template-name">Template Name:</label>
+                    <input type="text" id="template-name" placeholder="E.g., Favorite Breakfast">
+                </div>
+                <div class="form-group">
+                    <label for="template-meal">Meal Description:</label>
+                    <input type="text" id="template-meal" placeholder="Enter meal details">
+                </div>
+                <div class="form-group">
+                    <label for="template-type">Meal Type:</label>
+                    <select id="template-type">
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                </div>
+                <button id="save-template">Save Template</button>
+                
+                <div id="templates-list" class="grocery-list">
+                    <h3>Saved Templates</h3>
+                </div>
+            `;
+            
+            const mealPage = document.getElementById('meal-page');
+            mealPage.parentNode.insertBefore(templateSection, mealPage);
+            
+            // Add event listener for saving templates
+            document.getElementById('save-template').addEventListener('click', () => {
+                const name = document.getElementById('template-name').value.trim();
+                const meal = document.getElementById('template-meal').value.trim();
+                const type = document.getElementById('template-type').value;
+                
+                if (name && meal) {
+                    const template = {
+                        id: Date.now(),
+                        name,
+                        meal,
+                        type
+                    };
+                    
+                    mealTemplates.push(template);
+                    saveMealTemplates();
+                    renderMealTemplates();
+                    
+                    document.getElementById('template-name').value = '';
+                    document.getElementById('template-meal').value = '';
+                }
+            });
+            
+            renderMealTemplates();
+        }
+
+        // Call this function after your initial page setup
+        addMealTemplateSection();
+
+        // Initial render
+        renderGroceryList();
+        renderMealPlan();
+    </script>
+</body>
+</html>
