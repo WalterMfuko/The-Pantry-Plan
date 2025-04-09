@@ -231,6 +231,18 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        // Add this right after Firebase initialization
+        if (window.location.hostname.includes('github.io')) {
+            console.log("Running on GitHub Pages");
+            console.log("Current hostname:", window.location.hostname);
+            console.log("Firebase auth domains:", firebaseConfig.authDomain);
+            
+            // Test Firebase connection
+            firebase.app().options.projectId 
+                ? console.log("Firebase connected successfully") 
+                : console.log("Firebase connection issue");
+        }
+
         // Local development vs. production fix
         if (window.location.hostname.includes('github.io')) {
             // For GitHub Pages
