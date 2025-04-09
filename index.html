@@ -212,6 +212,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
     <script>
+        // Add this near the top of your script section
+        const version = '1.0.1'; // Increment this whenever you need to force a cache refresh
+        console.log(`App version: ${version}`);
+
         // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCWkllPZb69dg9Y7VbeJyDxJVUAlb06CX8",
@@ -226,6 +230,15 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+
+        // Local development vs. production fix
+        if (window.location.hostname.includes('github.io')) {
+            // For GitHub Pages
+            auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+                .catch((error) => {
+                    console.error("Auth persistence error:", error);
+                });
+        }
         
         // Login/Signup toggle
         document.getElementById('show-signup').addEventListener('click', (e) => {
@@ -248,7 +261,7 @@
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Redirect to app after signup
-                    window.location.href = 'app.html';
+                    window.location.href = './app.html';
                 })
                 .catch(error => {
                     alert(`Signup error: ${error.message}`);
@@ -263,7 +276,7 @@
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Redirect to app after login
-                    window.location.href = 'app.html';
+                    window.location.href = './app.html';
                 })
                 .catch(error => {
                     alert(`Login error: ${error.message}`);
@@ -274,7 +287,7 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 // User is signed in, redirect to app
-                window.location.href = 'app.html';
+                window.location.href = './app.html';
             }
         });
     </script>
