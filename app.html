@@ -163,6 +163,20 @@
                 display: flex;
                 justify-content: space-between;
             }
+            
+            /* Ensure meal templates appear after meal planner on mobile */
+            #meal-page {
+                order: 1;
+            }
+            
+            .meal-templates {
+                order: 2;
+            }
+            
+            /* Add some spacing */
+            .meal-templates {
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
@@ -231,6 +245,7 @@
         </div>
         
         <button id="add-item">Add Item</button>
+        <button id="save-all-btn" style="margin-top: 15px; background-color: #e67e22;">Save All Changes</button>
         
         <div class="grocery-list">
             <div id="produce" class="category-section">
@@ -262,33 +277,6 @@
                 <h3>Other</h3>
                 <div id="other-items"></div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Meal Templates Section -->
-    <div class="container">
-        <h2>Meal Templates</h2>
-        <div class="form-group">
-            <label for="template-name">Template Name:</label>
-            <input type="text" id="template-name" placeholder="E.g., Favorite Breakfast">
-        </div>
-        <div class="form-group">
-            <label for="template-meal">Meal Description:</label>
-            <input type="text" id="template-meal" placeholder="Enter meal details">
-        </div>
-        <div class="form-group">
-            <label for="template-type">Meal Type:</label>
-            <select id="template-type">
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <option value="dinner">Dinner</option>
-                <option value="snack">Snack</option>
-            </select>
-        </div>
-        <button id="save-template">Save Template</button>
-        
-        <div id="templates-list" class="grocery-list">
-            <h3>Saved Templates</h3>
         </div>
     </div>
     
@@ -502,6 +490,15 @@ measurementId: "G-76H3NV3W4L"
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       
+      // Add this after Firebase initialization
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+          console.log("Auth persistence set to LOCAL");
+        })
+        .catch((error) => {
+          console.error("Error setting auth persistence:", error);
+        });
+      
       // Initialize services
       const auth = firebase.auth();
       const db = firebase.firestore();
@@ -570,22 +567,34 @@ measurementId: "G-76H3NV3W4L"
                 };
                 
                 groceryList.push(item);
-                saveGroceryList();  // This now uses Firebase
+                console.log("Item added to list:", item);
+                
+                // Save immediately after adding
+                saveGroceryList();
                 renderGroceryList();
                 itemName.value = '';
             }
         });
         
-        // Save grocery list to Firebase
+        // Modify the saveGroceryList function
         function saveGroceryList() {
-          if (!auth.currentUser) return;
+          if (!auth.currentUser) {
+            console.error("Cannot save: No user is logged in");
+            return;
+          }
+          
+          console.log("Attempting to save grocery list", groceryList);
           
           db.collection('users').doc(auth.currentUser.uid)
             .set({
               groceryList: groceryList
             }, { merge: true })
+            .then(() => {
+              console.log("Grocery list saved successfully");
+            })
             .catch(error => {
               console.error("Error saving grocery list: ", error);
+              alert("Failed to save your grocery list. Please try again.");
             });
         }
         
@@ -773,7 +782,7 @@ measurementId: "G-76H3NV3W4L"
 
         function addMealTemplateSection() {
             const templateSection = document.createElement('div');
-            templateSection.className = 'container';
+            templateSection.className = 'container meal-templates';
             templateSection.innerHTML = `
                 <h2>Meal Templates</h2>
                 <div class="form-group">
@@ -800,8 +809,9 @@ measurementId: "G-76H3NV3W4L"
                 </div>
             `;
             
+            // Place after meal page instead of before it
             const mealPage = document.getElementById('meal-page');
-            mealPage.parentNode.insertBefore(templateSection, mealPage);
+            mealPage.parentNode.insertBefore(templateSection, mealPage.nextSibling);
             
             // Add event listener for saving templates
             document.getElementById('save-template').addEventListener('click', () => {
@@ -960,5 +970,13 @@ measurementId: "G-76H3NV3W4L"
         // Initial render
         loadUserData();
     </script>
+    <script>
+document.getElementById('save-all-btn').addEventListener('click', () => {
+    saveGroceryList();
+    saveMealPlan();
+    saveMealTemplates();
+    alert("All changes saved!");
+});
+</script>
 </body>
 </html>
