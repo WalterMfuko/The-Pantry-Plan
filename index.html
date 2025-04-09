@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pantry Plan - Your Meal Planning Solution</title>
+    <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Hero section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* Features section */
+        .features {
+            padding: 60px 20px;
+            background-color: white;
+            text-align: center;
+        }
+        
+        .features h2 {
+            color: #3b7d4a;
+            margin-bottom: 40px;
+        }
+        
+        .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            flex: 1 1 300px;
+            max-width: 350px;
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card h3 {
+            color: #3b7d4a;
+            margin-bottom: 15px;
+        }
+
+        /* Authentication section */
+        .auth-section {
+            padding: 60px 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .auth-container {
+            max-width: 450px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #3b7d4a;
+            border: none;
+            color: white;
+            padding: 12px 15px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2a5a34;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-page">
+        <section class="hero">
+            <h1>Welcome to Pantry Plan</h1>
+            <p>Your all-in-one solution for meal planning and grocery shopping.</p>
+        </section>
+        
+        <section class="features">
+            <h2>Why Choose Pantry Plan?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Grocery Management</h3>
+                    <p>Organize your grocery list by categories. Mark items as purchased and keep track of what you need.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Meal Planning</h3>
+                    <p>Plan your meals for the entire week. Breakfast, lunch, dinner and snacks all in one place.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Meal Templates</h3>
+                    <p>Save your favorite meals as templates for quick and easy meal planning next time.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="auth-section">
+            <div class="auth-container">
+                <div id="login-section">
+                    <h2>Login to Your Account</h2>
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" placeholder="Enter your password">
+                    </div>
+                    <button id="login-btn">Login</button>
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" id="show-signup">Don't have an account? Sign up</a>
+                    </p>
+                </div>
+                
+                <div id="signup-section" style="display: none;">
+                    <h2>Create an Account</h2>
+                    <div class="form-group">
+                        <label for="signup-email">Email:</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password:</label>
+                        <input type="password" id="signup-password" placeholder="Choose a password">
+                    </div>
+                    <button id="signup-btn">Sign Up</button>
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" id="show-login">Already have an account? Login</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2025 Pantry Plan. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWkllPZb69dg9Y7VbeJyDxJVUAlb06CX8",
+            authDomain: "the-pantry-plan.firebaseapp.com",
+            projectId: "the-pantry-plan",
+            storageBucket: "the-pantry-plan.firebasestorage.app",
+            messagingSenderId: "852012100167",
+            appId: "1:852012100167:web:58b61ad3ace2fd1d345f62",
+            measurementId: "G-76H3NV3W4L"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // Login/Signup toggle
+        document.getElementById('show-signup').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-section').style.display = 'block';
+        });
+
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('signup-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+        });
+
+        // Signup functionality
+        document.getElementById('signup-btn').addEventListener('click', () => {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Redirect to app after signup
+                    window.location.href = 'app.html';
+                })
+                .catch(error => {
+                    alert(`Signup error: ${error.message}`);
+                });
+        });
+
+        // Login functionality
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Redirect to app after login
+                    window.location.href = 'app.html';
+                })
+                .catch(error => {
+                    alert(`Login error: ${error.message}`);
+                });
+        });
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in, redirect to app
+                window.location.href = 'app.html';
+            }
+        });
+    </script>
+</body>
+</html>
