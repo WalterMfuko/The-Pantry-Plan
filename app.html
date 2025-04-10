@@ -1,18 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Add these to the <head> section BEFORE your first script -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+      // Initialize Firebase first thing
+      const firebaseConfig = {
+        apiKey: "AIzaSyCWkllPZb69dg9Y7VbeJyDxJVUAlb06CX8",
+        authDomain: "the-pantry-plan.firebaseapp.com",
+        projectId: "the-pantry-plan",
+        storageBucket: "the-pantry-plan.firebasestorage.app",
+        messagingSenderId: "852012100167",
+        appId: "1:852012100167:web:58b61ad3ace2fd1d345f62",
+        measurementId: "G-76H3NV3W4L"
+      };
+      
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Add this after Firebase initialization
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+          console.log("Auth persistence set to LOCAL");
+        })
+        .catch((error) => {
+          console.error("Error setting auth persistence:", error);
+        });
+
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+    </script>
+
     <script>
         // We'll load Firebase here at the very beginning to check auth
         document.addEventListener("DOMContentLoaded", function() {
-            // The rest of the script will run after checking auth status
-            const auth = firebase.auth();
+            // Use the already initialized auth instance - don't redeclare variables
             
             auth.onAuthStateChanged(user => {
                 if (!user) {
                     // Only redirect if user is NOT logged in
                     window.location.href = './index.html';
                 }
-                // If user is logged in, stay on this page and continue loading
+                // Rest of your auth code...
             });
         });
     </script>
@@ -477,27 +509,17 @@
     <script>
       // Your Firebase configuration
       const firebaseConfig = {
-apiKey: "AIzaSyCWkllPZb69dg9Y7VbeJyDxJVUAlb06CX8",
-authDomain: "the-pantry-plan.firebaseapp.com",
-projectId: "the-pantry-plan",
-storageBucket: "the-pantry-plan.firebasestorage.app",
-messagingSenderId: "852012100167",
-appId: "1:852012100167:web:58b61ad3ace2fd1d345f62",
-measurementId: "G-76H3NV3W4L"
-};
-
+        apiKey: "AIzaSyCWkllPZb69dg9Y7VbeJyDxJVUAlb06CX8",
+        authDomain: "the-pantry-plan.firebaseapp.com",
+        projectId: "the-pantry-plan",
+        storageBucket: "the-pantry-plan.firebasestorage.app",
+        messagingSenderId: "852012100167",
+        appId: "1:852012100167:web:58b61ad3ace2fd1d345f62",
+        measurementId: "G-76H3NV3W4L"
+      };
 
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
-      
-      // Add this after Firebase initialization
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-          console.log("Auth persistence set to LOCAL");
-        })
-        .catch((error) => {
-          console.error("Error setting auth persistence:", error);
-        });
       
       // Initialize services
       const auth = firebase.auth();
@@ -567,12 +589,25 @@ measurementId: "G-76H3NV3W4L"
                 };
                 
                 groceryList.push(item);
-                console.log("Item added to list:", item);
                 
-                // Save immediately after adding
-                saveGroceryList();
-                renderGroceryList();
-                itemName.value = '';
+                // Show saving indicator
+                addItemBtn.textContent = "Saving...";
+                addItemBtn.disabled = true;
+                
+                // Save and provide feedback
+                saveGroceryList()
+                    .then(() => {
+                        renderGroceryList();
+                        itemName.value = '';
+                        console.log("Item added and saved successfully");
+                    })
+                    .catch(error => {
+                        alert("Failed to save item: " + error.message);
+                    })
+                    .finally(() => {
+                        addItemBtn.textContent = "Add Item";
+                        addItemBtn.disabled = false;
+                    });
             }
         });
         
@@ -585,7 +620,7 @@ measurementId: "G-76H3NV3W4L"
           
           console.log("Attempting to save grocery list", groceryList);
           
-          db.collection('users').doc(auth.currentUser.uid)
+          return db.collection('users').doc(auth.currentUser.uid)
             .set({
               groceryList: groceryList
             }, { merge: true })
@@ -594,7 +629,7 @@ measurementId: "G-76H3NV3W4L"
             })
             .catch(error => {
               console.error("Error saving grocery list: ", error);
-              alert("Failed to save your grocery list. Please try again.");
+              alert("Failed to save your grocery list: " + error.message);
             });
         }
         
@@ -972,10 +1007,27 @@ measurementId: "G-76H3NV3W4L"
     </script>
     <script>
 document.getElementById('save-all-btn').addEventListener('click', () => {
-    saveGroceryList();
-    saveMealPlan();
-    saveMealTemplates();
-    alert("All changes saved!");
+    // Show saving indicator
+    const originalText = document.getElementById('save-all-btn').textContent;
+    document.getElementById('save-all-btn').textContent = "Saving...";
+    document.getElementById('save-all-btn').disabled = true;
+    
+    // Save everything
+    Promise.all([
+        saveGroceryList(),
+        saveMealPlan(),
+        saveMealTemplates()
+    ])
+    .then(() => {
+        alert("All changes saved successfully!");
+    })
+    .catch(error => {
+        alert("Error saving data: " + error.message);
+    })
+    .finally(() => {
+        document.getElementById('save-all-btn').textContent = originalText;
+        document.getElementById('save-all-btn').disabled = false;
+    });
 });
 </script>
 </body>
